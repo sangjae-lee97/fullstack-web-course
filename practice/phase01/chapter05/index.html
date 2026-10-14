@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS Box Model 실습</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <section class="card">
+            <h2>회원 목록</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>이메일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>홍길동</td>
+                        <td>hong@example.com</td>
+                    </tr>
+                    <tr>
+                        <td>김철수</td>
+                        <td>kim@example.com</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section class="card" id="member-form">
+            <h2>회원 등록</h2>
+
+            <form>
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name">
+
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email">
+
+                <button type="button">등록</button>
+                <a class="button-link" href="#member-form">회원 등록</a>
+            </form>
+        </section>
+
+    </main>
+</body>
+</html>
