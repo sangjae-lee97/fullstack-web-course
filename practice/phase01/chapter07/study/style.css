@@ -1,0 +1,134 @@
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #23978d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+
+input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #bbb;
+}
+
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button,
+.button-link {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 모바일 기본 */
+.site-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+}
+
+/* 태블릿 이상 */
+@media (min-width: 768px) {
+    .site-header {
+        flex-direction: row;
+    }
+}
+
+.main-nav {
+    display: flex;
+    gap: 16px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.toolbar input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    padding: 10px;
+}
+
+.member-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+@media (min-width: 768px) {
+    .member-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .member-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.member-card {
+    padding: 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: white;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* STEP 09: 반응형 이미지 */
+img {
+    max-width: 100%;
+    height: auto;
+}

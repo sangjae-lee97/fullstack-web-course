@@ -1,0 +1,99 @@
+/* 모든 요소의 크기 계산 방식 통일 */
+* {
+    box-sizing: border-box;
+}
+
+/* 페이지 기본 스타일 */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+/* Header - 모바일 기본 */
+.dashboard-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 0;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+}
+
+.header-link {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* 전체 콘텐츠 */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 24px auto;
+}
+
+/* 강의 목록 - 모바일 1열 */
+.course-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+/* 강의 카드 */
+.course-card {
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.course-card h3 {
+    margin-top: 0;
+}
+
+/* 진행 상태 공통 스타일 */
+.status {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+/* 진행 상태별 색상 */
+.completed {
+    color: #16a34a;
+}
+
+.in-progress {
+    color: #ea580c;
+}
+
+.planned {
+    color: #6b7280;
+}
+
+/* 태블릿: 768px 이상 */
+@media (min-width: 768px) {
+    .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* 데스크톱: 1024px 이상 */
+@media (min-width: 1024px) {
+    .course-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
