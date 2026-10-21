@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+}
+
+.container {
+    width: min(900px, 92%);
+    margin: 40px auto;
+}
+
+.member-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.member-card {
+    background: white;
+    padding: 20px;
+    border: 1px solid #dbe1ea;
+    border-radius: 12px;
+}
+
+.member-card h2 {
+    margin-top: 0;
+}
+
+.empty-message {
+    padding: 24px;
+    background: white;
+    border: 1px dashed #94a3b8;
+    border-radius: 12px;
+    text-align: center;
+}

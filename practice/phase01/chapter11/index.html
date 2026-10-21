@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 11 - Course Registration</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <h1>강좌 등록 시스템</h1>
+        <p>Chapter 11 - Event와 Form 실습</p>
+    </header>
+
+    <main>
+
+        <!-- 강좌 등록 영역 -->
+        <section>
+            <h2>새 강좌 등록</h2>
+
+            <form id="course-form">
+
+                <label for="course-title">강좌명</label>
+                <input
+                    type="text"
+                    id="course-title"
+                    name="title"
+                    required
+                >
+
+                <label for="course-instructor">강사명</label>
+                <input
+                    type="text"
+                    id="course-instructor"
+                    name="instructor"
+                    required
+                >
+
+                <button type="submit">강좌 등록</button>
+
+            </form>
+        </section>
+
+        <!-- 강좌 검색 영역 -->
+        <section>
+            <h2>강좌 검색</h2>
+
+            <input
+                type="text"
+                id="search-input"
+                placeholder="강좌명을 입력하세요"
+            >
+        </section>
+
+        <!-- 강좌 목록 영역 -->
+        <section>
+            <h2>강좌 목록</h2>
+
+            <div id="course-list"></div>
+        </section>
+
+    </main>
+
+</body>
+</html>

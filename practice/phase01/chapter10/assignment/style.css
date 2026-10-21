@@ -1,0 +1,61 @@
+/* STEP 08. 기본 스타일 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+}
+
+/* 전체 컨테이너 */
+.container {
+    width: min(900px, 92%);
+    margin: 40px auto;
+}
+
+/* 페이지 제목 */
+.container h1 {
+    margin-bottom: 24px;
+}
+
+/* 강좌 목록 */
+#course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: grid;
+    gap: 16px;
+}
+
+/* 강좌 카드 */
+#course-list > li {
+    background: white;
+    padding: 20px;
+    border: 1px solid #dbe1ea;
+    border-radius: 12px;
+}
+
+/* 강좌명 */
+#course-list > li h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+/* 강좌 수준 */
+#course-list > li p {
+    margin: 0;
+    color: #475569;
+}
+
+/* 등록된 강좌가 없을 때 */
+#course-list > li.empty-message {
+    padding: 24px;
+    border: 1px dashed #94a3b8;
+    border-radius: 12px;
+    text-align: center;
+    color: #64748b;
+}

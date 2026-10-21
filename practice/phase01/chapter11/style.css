@@ -1,0 +1,132 @@
+
+/* 전체 페이지 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+/* 상단 제목 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #2563eb;
+}
+
+/* 본문 영역 */
+main {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 등록, 검색, 목록 영역 */
+section {
+    background-color: white;
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+/* 등록 Form */
+#course-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    font-weight: bold;
+}
+
+/* 입력창 */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* 등록 버튼 */
+button {
+    padding: 12px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+}
+
+/* 강좌 목록 */
+#course-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* JavaScript에서 생성할 강좌 카드 */
+.course-card {
+    padding: 16px;
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+}
+
+.course-card h3 {
+    margin-top: 0;
+    color: #1d4ed8;
+}
+
+.course-card p {
+    margin-bottom: 0;
+}
+
+/* 빈 목록 안내 */
+.empty-message {
+    grid-column: 1 / -1;
+    padding: 24px;
+    text-align: center;
+    color: #777;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+}
+
+/* 모바일 대응 */
+@media (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+
+    section {
+        padding: 16px;
+    }
+
+    #course-list {
+        grid-template-columns: 1fr;
+    }
+}
