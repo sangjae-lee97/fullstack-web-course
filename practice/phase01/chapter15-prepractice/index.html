@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <h1>Book Explorer</h1>
+        <p>도서를 검색하고 등록 요청을 연습하는 웹페이지입니다.</p>
+    </header>
+
+    <main>
+
+        <!-- 도서 검색 영역 -->
+        <section>
+            <h2>도서 검색</h2>
+
+            <form id="search-form">
+                <label for="search-input">검색어</label>
+                <input
+                    type="text"
+                    id="search-input"
+                    name="keyword"
+                    placeholder="도서 제목을 입력하세요"
+                    required
+                >
+                <button type="submit">검색</button>
+            </form>
+
+            <p id="status-message">검색어를 입력하세요.</p>
+        </section>
+
+        <!-- 도서 목록 영역 -->
+        <section>
+            <h2>검색 결과</h2>
+            <ul id="book-list"></ul>
+        </section>
+
+        <!-- 도서 상세 영역 -->
+        <section>
+            <h2>도서 상세</h2>
+            <div id="book-detail">
+                <p>도서를 선택하세요.</p>
+            </div>
+        </section>
+
+        <!-- 도서 등록 요청 영역 -->
+        <section>
+            <h2>도서 등록 요청</h2>
+
+            <form id="book-form">
+
+                <label for="book-title">제목</label>
+                <input
+                    type="text"
+                    id="book-title"
+                    name="title"
+                    placeholder="도서 제목"
+                    required
+                >
+
+                <label for="book-author">저자</label>
+                <input
+                    type="text"
+                    id="book-author"
+                    name="author"
+                    placeholder="저자 이름"
+                    required
+                >
+
+                <button type="submit">등록 요청</button>
+            </form>
+
+            <p id="form-message"></p>
+        </section>
+
+    </main>
+
+</body>
+</html>
