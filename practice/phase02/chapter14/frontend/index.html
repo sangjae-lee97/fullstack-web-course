@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 14 - Member Frontend</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: inline-block;
+            width: 70px;
+        }
+
+        input {
+            padding: 8px;
+            width: 250px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #status,
+        #create-status {
+            margin-top: 15px;
+        }
+    </style>
+
+    <!-- 환경 설정을 먼저 로드 -->
+    <script src="./config.js" defer></script>
+
+    <!-- 환경 설정 로드 후 앱 실행 -->
+    <script src="./app.js" defer></script>
+</head>
+
+<body>
+    <h1>Chapter 14 - 회원 관리</h1>
+    <p>FastAPI + PostgreSQL + JavaScript</p>
+
+    <h2>회원 등록</h2>
+
+    <form id="member-form">
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="age">나이</label>
+            <input type="number" id="age" min="0" required>
+        </div>
+
+        <button type="submit" id="submit-button">
+            회원 등록
+        </button>
+    </form>
+
+    <p id="create-status"></p>
+
+    <hr>
+
+    <h2>회원 목록</h2>
+    <p id="status">회원 목록을 불러오는 중...</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>나이</th>
+            </tr>
+        </thead>
+
+        <tbody id="member-list"></tbody>
+    </table>
+</body>
+</html>
