@@ -1,33 +1,70 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
 import MemberList from "./MemberList";
+import { getMembers } from "../lib/members-api";
 import type { Member } from "../types/member";
 
-type MemberWorkspaceProps = {
-  initialMembers: Member[];
-};
-
-export default function MemberWorkspace({
-  initialMembers,
-}: MemberWorkspaceProps) {
+export default function MemberWorkspace() {
+  const [members, setMembers] = useState<Member[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
 
-  const filteredMembers = initialMembers.filter((member) => {
-    const keyword = search.trim().toLocaleLowerCase();
+  // 1. FastAPI 회원 목록 조회
+  useEffect(() => {
+    const controller = new AbortController();
 
-    return (
+    getMembers(controller.signal)
+      .then((data) => {
+        if (controller.signal.aborted) return;
+
+        setMembers(data);
+        setError("");
+      })
+      .catch((caught: unknown) => {
+        if (controller.signal.aborted) return;
+
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : "알 수 없는 조회 오류"
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [reloadKey]);
+
+  // 2. 다시 조회 버튼 이벤트
+  function handleReload() {
+    setLoading(true);
+    setError("");
+    setReloadKey((value) => value + 1);
+  }
+
+  // 3. 회원 검색
+  const keyword = search.trim().toLowerCase();
+
+  const filteredMembers = members.filter(
+    (member) =>
       member.name.toLowerCase().includes(keyword) ||
       member.email.toLowerCase().includes(keyword)
-    );
-  });
+  );
 
+  // 4. 입력 폼 검증
   const ageNumber = Number(age);
 
   const validAge =
@@ -39,13 +76,11 @@ export default function MemberWorkspace({
   function handlePreview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!name.trim() || !email.trim() || !validAge) {
-      return;
-    }
-
-    // 3강: API 요청 및 DB 저장은 하지 않습니다.
+    // 4강: 입력값 미리보기만 수행합니다.
+    // 실제 POST 요청은 5강에서 구현합니다.
   }
 
+  // 5. 화면 구성
   return (
     <div>
       <section style={{ marginTop: 28 }}>
@@ -64,8 +99,6 @@ export default function MemberWorkspace({
           style={{
             width: "min(100%, 360px)",
             padding: 10,
-            border: "1px solid #94a3b8",
-            borderRadius: 8,
           }}
         />
 
@@ -74,15 +107,36 @@ export default function MemberWorkspace({
           onClick={() => setSearch("")}
           style={{
             marginLeft: 8,
-            padding: "10px 14px",
-            cursor: "pointer",
+            padding: 10,
           }}
         >
-          초기화
+          검색 초기화
+        </button>
+
+        <button
+          type="button"
+          disabled={loading}
+          onClick={handleReload}
+          style={{
+            marginLeft: 8,
+            padding: 10,
+          }}
+        >
+          다시 조회
         </button>
       </section>
 
-      <MemberList members={filteredMembers} />
+      {loading ? (
+        <p role="status">
+          회원 목록을 불러오는 중입니다...
+        </p>
+      ) : error ? (
+        <p role="alert" style={{ color: "#b91c1c" }}>
+          조회 오류: {error}
+        </p>
+      ) : (
+        <MemberList members={filteredMembers} />
+      )}
 
       <section
         style={{
@@ -97,7 +151,8 @@ export default function MemberWorkspace({
         </h2>
 
         <p style={{ color: "#64748b" }}>
-          아직 저장 기능이 없습니다. 입력값만 확인합니다.
+          실제 등록은 5강에서 구현합니다.
+          오늘은 입력 연습만 합니다.
         </p>
 
         <form onSubmit={handlePreview}>
@@ -106,13 +161,11 @@ export default function MemberWorkspace({
             id="member-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Hong"
             required
             style={{
               display: "block",
               padding: 10,
-              margin: "6px 0 16px",
-              width: "min(100%, 360px)",
+              marginBottom: 14,
             }}
           />
 
@@ -122,13 +175,11 @@ export default function MemberWorkspace({
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="hong@example.com"
             required
             style={{
               display: "block",
               padding: 10,
-              margin: "6px 0 16px",
-              width: "min(100%, 360px)",
+              marginBottom: 14,
             }}
           />
 
@@ -140,36 +191,33 @@ export default function MemberWorkspace({
             max={150}
             value={age}
             onChange={(event) => setAge(event.target.value)}
-            placeholder="25"
             required
             style={{
               display: "block",
               padding: 10,
-              margin: "6px 0 16px",
-              width: "min(100%, 360px)",
+              marginBottom: 14,
             }}
           />
 
           <button
             type="submit"
             disabled={!name.trim() || !email.trim() || !validAge}
-            style={{ padding: "10px 14px" }}
+            style={{ padding: 10 }}
           >
             입력값 확인
           </button>
         </form>
 
-        <p role="status" style={{ marginTop: 20 }}>
-          <strong>현재 입력값:</strong>{" "}
-          {name.trim() || "(이름 없음)"} /{" "}
+        <p role="status">
+          현재 입력값: {name.trim() || "(이름 없음)"} /{" "}
           {email.trim() || "(이메일 없음)"} /{" "}
           {validAge
-            ? ageNumber + "세"
-            : "(나이 미입력 또는 범위 오류)"}
+            ? `${ageNumber}세`
+            : "(나이 미입력 또는 오류)"}
         </p>
 
-        <p style={{ color: "#b45309", fontWeight: 600 }}>
-          학습용 미리보기이며 저장되지 않습니다.
+        <p style={{ color: "#b45309" }}>
+          학습용 미리보기이며 DB에 저장되지 않습니다.
         </p>
       </section>
     </div>
