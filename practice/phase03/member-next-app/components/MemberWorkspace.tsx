@@ -5,57 +5,68 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
 import MemberList from "./MemberList";
-import { getMembers } from "../lib/members-api";
+import {
+  createMember,
+  deleteMember,
+  getMembers,
+  updateMember,
+} from "../lib/members-api";
 import type { Member } from "../types/member";
 
 export default function MemberWorkspace() {
+  // 회원 목록 및 조회 상태
   const [members, setMembers] = useState<Member[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
 
+  // 회원 등록 및 수정 폼
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  // 1. FastAPI 회원 목록 조회
+  // API 작업 상태
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  // GET: 회원 목록 조회
   useEffect(() => {
     const controller = new AbortController();
 
-    getMembers(controller.signal)
-      .then((data) => {
-        if (controller.signal.aborted) return;
+    async function load() {
+      setLoading(true);
+      setLoadError("");
 
-        setMembers(data);
-        setError("");
-      })
-      .catch((caught: unknown) => {
-        if (controller.signal.aborted) return;
+      try {
+        const data = await getMembers(controller.signal);
 
-        setError(
-          caught instanceof Error
-            ? caught.message
-            : "알 수 없는 조회 오류"
-        );
-      })
-      .finally(() => {
+        if (!controller.signal.aborted) {
+          setMembers(data);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : "조회 오류가 발생했습니다."
+          );
+        }
+      } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
         }
-      });
+      }
+    }
+
+    void load();
 
     return () => controller.abort();
   }, [reloadKey]);
 
-  // 2. 다시 조회 버튼 이벤트
-  function handleReload() {
-    setLoading(true);
-    setError("");
-    setReloadKey((value) => value + 1);
-  }
-
-  // 3. 회원 검색
+  // 회원 검색
   const keyword = search.trim().toLowerCase();
 
   const filteredMembers = members.filter(
@@ -64,7 +75,7 @@ export default function MemberWorkspace() {
       member.email.toLowerCase().includes(keyword)
   );
 
-  // 4. 입력 폼 검증
+  // 입력값 검증
   const ageNumber = Number(age);
 
   const validAge =
@@ -73,71 +84,191 @@ export default function MemberWorkspace() {
     ageNumber >= 0 &&
     ageNumber <= 150;
 
-  function handlePreview(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const validForm =
+    name.trim() !== "" &&
+    email.trim() !== "" &&
+    validAge;
 
-    // 4강: 입력값 미리보기만 수행합니다.
-    // 실제 POST 요청은 5강에서 구현합니다.
+  // 입력 폼 초기화
+  function clearForm() {
+    setEditingId(null);
+    setName("");
+    setEmail("");
+    setAge("");
   }
 
-  // 5. 화면 구성
+  // 수정 버튼 클릭 시 기존 회원 정보를 폼에 입력
+  function startEdit(member: Member) {
+    setEditingId(member.member_id);
+    setName(member.name);
+    setEmail(member.email);
+    setAge(String(member.age));
+    setActionError("");
+    setNotice("");
+  }
+
+  // POST 또는 PUT: 회원 등록 및 수정
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!validForm || busy || loading) return;
+
+    setBusy(true);
+    setActionError("");
+    setNotice("");
+
+    let changed = false;
+    const action = editingId === null ? "등록" : "수정";
+
+    try {
+      const payload = {
+        name: name.trim(),
+        email: email.trim(),
+        age: ageNumber,
+      };
+
+      if (editingId === null) {
+        await createMember(payload);
+      } else {
+        await updateMember(editingId, payload);
+      }
+
+      changed = true;
+
+      // 변경 성공 후 GET 재조회
+      const latest = await getMembers();
+      setMembers(latest);
+
+      clearForm();
+      setNotice(
+        "회원 " + action + " 후 목록을 다시 조회했습니다."
+      );
+    } catch (error) {
+      const detail =
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류";
+
+      setActionError(
+        changed
+          ? "서버 변경 요청은 성공했으나 목록 재조회에 실패했습니다: " +
+              detail
+          : "회원 " + action + " 요청 실패: " + detail
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // DELETE: 회원 삭제
+  async function handleDelete(member: Member) {
+    if (busy || loading) return;
+
+    // 삭제 전 사용자 확인
+    if (
+      !window.confirm(
+        member.name +
+          " 회원(ID " +
+          member.member_id +
+          ")을 삭제할까요?"
+      )
+    ) {
+      return;
+    }
+
+    setBusy(true);
+    setActionError("");
+    setNotice("");
+
+    let changed = false;
+
+    try {
+      await deleteMember(member.member_id);
+      changed = true;
+
+      // 삭제 후 GET 재조회
+      const latest = await getMembers();
+      setMembers(latest);
+
+      if (editingId === member.member_id) {
+        clearForm();
+      }
+
+      setNotice("회원 삭제 후 목록을 다시 조회했습니다.");
+    } catch (error) {
+      const detail =
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류";
+
+      setActionError(
+        changed
+          ? "서버 삭제 요청은 성공했으나 목록 재조회에 실패했습니다: " +
+              detail
+          : "회원 삭제 요청 실패: " + detail
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div>
+      {/* 회원 검색 */}
       <section style={{ marginTop: 28 }}>
-        <label
-          htmlFor="member-search"
-          style={{ display: "block", marginBottom: 8 }}
-        >
+        <label htmlFor="member-search">
           회원 검색 (이름 또는 이메일)
         </label>
 
-        <input
-          id="member-search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="예: kim"
-          style={{
-            width: "min(100%, 360px)",
-            padding: 10,
-          }}
-        />
+        <div>
+          <input
+            id="member-search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="예: kim"
+            style={{ padding: 10, marginRight: 8 }}
+          />
 
-        <button
-          type="button"
-          onClick={() => setSearch("")}
-          style={{
-            marginLeft: 8,
-            padding: 10,
-          }}
-        >
-          검색 초기화
-        </button>
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+          >
+            검색 초기화
+          </button>{" "}
 
-        <button
-          type="button"
-          disabled={loading}
-          onClick={handleReload}
-          style={{
-            marginLeft: 8,
-            padding: 10,
-          }}
-        >
-          다시 조회
-        </button>
+          <button
+            type="button"
+            disabled={loading || busy}
+            onClick={() =>
+              setReloadKey((value) => value + 1)
+            }
+          >
+            다시 조회
+          </button>
+        </div>
       </section>
 
+      {/* 회원 목록 */}
       {loading ? (
         <p role="status">
           회원 목록을 불러오는 중입니다...
         </p>
-      ) : error ? (
+      ) : loadError ? (
         <p role="alert" style={{ color: "#b91c1c" }}>
-          조회 오류: {error}
+          목록 조회 오류: {loadError}
         </p>
       ) : (
-        <MemberList members={filteredMembers} />
+        <MemberList
+          members={filteredMembers}
+          onEdit={startEdit}
+          onDelete={(member) => {
+            void handleDelete(member);
+          }}
+          busy={busy}
+        />
       )}
 
+      {/* 회원 등록 및 수정 폼 */}
       <section
         style={{
           marginTop: 36,
@@ -146,21 +277,29 @@ export default function MemberWorkspace() {
           borderRadius: 12,
         }}
       >
-        <h2 style={{ marginTop: 0 }}>
-          회원 등록 연습 (미리보기)
+        <h2>
+          {editingId === null
+            ? "회원 등록"
+            : "회원 수정 (ID " + editingId + ")"}
         </h2>
 
-        <p style={{ color: "#64748b" }}>
-          실제 등록은 5강에서 구현합니다.
-          오늘은 입력 연습만 합니다.
+        <p>
+          실제 서버에 저장됩니다. 반드시 테스트 회원만
+          사용하세요.
         </p>
 
-        <form onSubmit={handlePreview}>
+        <form
+          onSubmit={(event) => {
+            void handleSubmit(event);
+          }}
+        >
           <label htmlFor="member-name">이름</label>
           <input
             id="member-name"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={(event) =>
+              setName(event.target.value)
+            }
             required
             style={{
               display: "block",
@@ -174,7 +313,9 @@ export default function MemberWorkspace() {
             id="member-email"
             type="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
             required
             style={{
               display: "block",
@@ -190,7 +331,9 @@ export default function MemberWorkspace() {
             min={0}
             max={150}
             value={age}
-            onChange={(event) => setAge(event.target.value)}
+            onChange={(event) =>
+              setAge(event.target.value)
+            }
             required
             style={{
               display: "block",
@@ -201,24 +344,35 @@ export default function MemberWorkspace() {
 
           <button
             type="submit"
-            disabled={!name.trim() || !email.trim() || !validAge}
-            style={{ padding: 10 }}
+            disabled={!validForm || busy || loading}
           >
-            입력값 확인
+            {busy
+              ? "처리 중..."
+              : editingId === null
+                ? "회원 등록"
+                : "회원 수정 저장"}
+          </button>{" "}
+
+          <button
+            type="button"
+            disabled={busy}
+            onClick={clearForm}
+          >
+            입력 초기화 / 수정 취소
           </button>
         </form>
 
-        <p role="status">
-          현재 입력값: {name.trim() || "(이름 없음)"} /{" "}
-          {email.trim() || "(이메일 없음)"} /{" "}
-          {validAge
-            ? `${ageNumber}세`
-            : "(나이 미입력 또는 오류)"}
-        </p>
+        {notice && (
+          <p role="status" style={{ color: "#166534" }}>
+            {notice}
+          </p>
+        )}
 
-        <p style={{ color: "#b45309" }}>
-          학습용 미리보기이며 DB에 저장되지 않습니다.
-        </p>
+        {actionError && (
+          <p role="alert" style={{ color: "#b91c1c" }}>
+            {actionError}
+          </p>
+        )}
       </section>
     </div>
   );

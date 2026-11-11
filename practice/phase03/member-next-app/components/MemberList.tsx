@@ -4,21 +4,49 @@ import MemberCard from "./MemberCard";
 
 type MemberListProps = {
   members: Member[];
+  onEdit: (member: Member) => void;
+  onDelete: (member: Member) => void;
+  busy: boolean;
 };
 
-export default function MemberList({ members }: MemberListProps) {
+export default function MemberList({
+  members,
+  onEdit,
+  onDelete,
+  busy,
+}: MemberListProps) {
   return (
-    <section aria-labelledby="member-list-title" style={{ marginTop: 32 }}>
-      <h2 id="member-list-title" style={{ fontSize: 24, color: "#0f172a" }}>
+    <section
+      aria-labelledby="member-list-title"
+      style={{ marginTop: 32 }}
+    >
+      <h2
+        id="member-list-title"
+        style={{ color: "#0f172a" }}
+      >
         회원 목록 ({members.length}명)
       </h2>
 
       {members.length === 0 ? (
-        <p style={{ color: "#64748b" }}>등록된 회원이 없습니다.</p>
+        <p style={{ color: "#64748b" }}>
+          등록된 회원이 없습니다.
+        </p>
       ) : (
-        <ul style={{ display: "grid", gap: 12, padding: 0 }}>
+        <ul
+          style={{
+            display: "grid",
+            gap: 12,
+            padding: 0,
+          }}
+        >
           {members.map((member) => (
-            <MemberCard key={member.member_id} member={member} />
+            <MemberCard
+              key={member.member_id}
+              member={member}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              busy={busy}
+            />
           ))}
         </ul>
       )}
