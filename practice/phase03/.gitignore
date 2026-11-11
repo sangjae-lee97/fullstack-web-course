@@ -1,3 +1,4 @@
+
 .env
 .venv/
 venv/
@@ -6,4 +7,6 @@ __pycache__/
 .pytest_cache/
 
 member-next-app/node_modules/
-member-next-app/.next//ui-backup-20261111/
+member-next-app/.next/
+
+/ui-backup-20261111/
