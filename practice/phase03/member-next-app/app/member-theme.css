@@ -1,0 +1,68 @@
+﻿
+/* Phase 03 - Soft Mint & Ivory Theme */
+
+:root {
+  color-scheme: light;
+  --background: #f8f6f4 !important;
+  --foreground: #274744 !important;
+}
+
+/* 가로 넘침 방지 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+  width: 100%;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: #f8f6f4 !important;
+  color: #274744 !important;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+}
+
+/* 페이지가 화면 너비를 초과하지 않도록 */
+main {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 회원 등록 및 수정 모달 중앙 배치 */
+dialog[aria-labelledby="member-modal-title"] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+
+  transform: translate(-50%, -50%);
+  margin: 0;
+
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+/* 모달 배경 */
+dialog::backdrop {
+  background: rgba(40, 111, 104, 0.18);
+  backdrop-filter: blur(3px);
+}
+
+/* 작은 화면에서도 모달 중앙 유지 */
+@media (max-width: 600px) {
+  dialog[aria-labelledby="member-modal-title"] {
+    width: calc(100% - 32px);
+    max-height: 85dvh;
+    overflow-y: auto;
+  }
+}

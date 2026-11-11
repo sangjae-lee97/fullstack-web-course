@@ -1,5 +1,8 @@
 
+import Link from "next/link";
+
 import type { Member } from "../types/member";
+import styles from "./member-management.module.css";
 
 type MemberCardProps = {
   member: Member;
@@ -14,42 +17,60 @@ export default function MemberCard({
   onDelete,
   busy,
 }: MemberCardProps) {
+  // 회원 이름의 첫 글자를 아바타로 사용
+  const initial = member.name.trim().charAt(0).toUpperCase() || "?";
+
   return (
-    <li
-      style={{
-        listStyle: "none",
-        padding: 20,
-        backgroundColor: "#fff",
-        border: "1px solid #cbd5e1",
-        borderRadius: 12,
-      }}
-    >
-      <h3 style={{ margin: "0 0 8px", color: "#0f172a" }}>
-        {member.name}
-      </h3>
+    <li className={styles.memberCard}>
+      <div className={styles.memberInfo}>
+        {/* 회원 아바타 */}
+        <div className={styles.avatar} aria-hidden="true">
+          {initial}
+        </div>
 
-      <p style={{ color: "#334155" }}>{member.email}</p>
+        {/* 회원 기본 정보 */}
+        <div className={styles.memberText}>
+          <h3 className={styles.memberName}>
+            {member.name}
+          </h3>
 
-      <p style={{ color: "#64748b" }}>
-        나이 {member.age}세 · ID {member.member_id}
-      </p>
+          <p className={styles.memberEmail}>
+            {member.email}
+          </p>
 
-      <button
-        type="button"
-        disabled={busy}
-        onClick={() => onEdit(member)}
-      >
-        수정
-      </button>{" "}
+          <p className={styles.memberMeta}>
+            나이 {member.age}세 · ID {member.member_id}
+          </p>
+        </div>
+      </div>
 
-      <button
-        type="button"
-        disabled={busy}
-        onClick={() => onDelete(member)}
-        style={{ color: "#b91c1c" }}
-      >
-        삭제
-      </button>
+      {/* 기존 상세 조회, 수정, 삭제 기능 유지 */}
+      <div className={styles.memberActions}>
+        <Link
+          href={"/members/" + member.member_id}
+          className={styles.linkButton}
+        >
+          상세 보기
+        </Link>
+
+        <button
+          type="button"
+          className={styles.secondaryButton}
+          disabled={busy}
+          onClick={() => onEdit(member)}
+        >
+          수정
+        </button>
+
+        <button
+          type="button"
+          className={styles.dangerButton}
+          disabled={busy}
+          onClick={() => onDelete(member)}
+        >
+          삭제
+        </button>
+      </div>
     </li>
   );
 }

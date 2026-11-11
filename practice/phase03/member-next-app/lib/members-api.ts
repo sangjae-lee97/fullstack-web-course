@@ -16,7 +16,7 @@ function apiUrl(path: string): string {
   return base.replace(/\/$/, "") + path;
 }
 
-// 서버에서 받은 데이터가 Member 타입인지 검사
+// Member 타입 검사
 function isMember(value: unknown): value is Member {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -41,7 +41,7 @@ async function requireOk(response: Response): Promise<void> {
   }
 }
 
-// GET: 회원 목록 조회
+// GET: 전체 회원 목록 조회
 export async function getMembers(
   signal?: AbortSignal
 ): Promise<Member[]> {
@@ -78,7 +78,7 @@ export async function createMember(
   await requireOk(response);
 }
 
-// PUT: 회원 정보 수정
+// PUT: 회원 수정
 export async function updateMember(
   memberId: number,
   body: MemberPayload
@@ -109,4 +109,30 @@ export async function deleteMember(
   );
 
   await requireOk(response);
+}
+
+// GET: 회원 한 명 상세 조회 (6강 추가)
+export async function getMember(
+  memberId: number,
+  signal?: AbortSignal
+): Promise<Member> {
+  const detailPath =
+    MEMBERS_PATH.replace(/\/$/, "") + "/" + memberId;
+
+  const response = await fetch(apiUrl(detailPath), {
+    cache: "no-store",
+    signal,
+  });
+
+  await requireOk(response);
+
+  const data: unknown = await response.json();
+
+  if (!isMember(data)) {
+    throw new Error(
+      "회원 상세 응답이 예상한 Member 형식이 아닙니다."
+    );
+  }
+
+  return data;
 }
