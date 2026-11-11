@@ -6,4 +6,4 @@ __pycache__/
 .pytest_cache/
 
 member-next-app/node_modules/
-member-next-app/.next/
+member-next-app/.next//ui-backup-20261111/
