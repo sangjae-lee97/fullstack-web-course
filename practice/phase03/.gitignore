@@ -1,4 +1,5 @@
 
+# Python environment
 .env
 .venv/
 venv/
@@ -6,7 +7,24 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# Next.js
 member-next-app/node_modules/
 member-next-app/.next/
 
+# Previous backups
 /ui-backup-20261111/
+*.bak
+
+# Playwright generated results
+member-next-app/test-results/
+member-next-app/playwright-report/
+
+# Temporary installation notes
+member-next-app/README.txt
+
+# Unused E2E test server
+backend/e2e_app.py
+
+# Third-party board game images
+# Keep local images; do not redistribute without permission
+member-next-app/public/boardgames/
