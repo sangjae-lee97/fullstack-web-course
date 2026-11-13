@@ -22,9 +22,6 @@ member-next-app/playwright-report/
 # Temporary installation notes
 member-next-app/README.txt
 
-# Unused E2E test server
-backend/e2e_app.py
-
 # Third-party board game images
 # Keep local images; do not redistribute without permission
 member-next-app/public/boardgames/
